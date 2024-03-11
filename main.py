@@ -16,13 +16,12 @@ def show_images(images, title_texts):
         title_text = x[1]
         plt.subplot(rows, cols, index)
         print("------------------------")
-        for i in image:
-            print("++++++")
-            print(i)
-        plt.imshow(image)
+        print(image)
+        plt.imshow(image, cmap = "gray", vmin = 0, vmax = 255)
         if (title_text != ''):
             plt.title(title_text, fontsize = 15)
         index += 1
+    plt.show()
 
 
 if __name__ == '__main__':
