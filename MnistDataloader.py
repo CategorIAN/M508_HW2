@@ -4,6 +4,8 @@ from array import array
 import os
 import random
 import matplotlib.pyplot as plt
+import pandas as pd
+from functools import reduce
 
 class MnistDataloader(object):
     def __init__(self):
@@ -27,10 +29,17 @@ class MnistDataloader(object):
         images = [image_func(i) for i in range(size)]
         return images, labels
 
-    def load_data(self):
-        x_train, y_train = self.read_images_labels(self.train_images_file, self.train_labels_file)
-        x_test, y_test = self.read_images_labels(self.test_images_file, self.test_labels_file)
-        return (x_train, y_train), (x_test, y_test)
+    def load_data(self, part = None):
+        if part == "train":
+            x_train, y_train = self.read_images_labels(self.train_images_file, self.train_labels_file)
+            return x_train, y_train
+        elif part == "test":
+            x_test, y_test = self.read_images_labels(self.test_images_file, self.test_labels_file)
+            return x_test, y_test
+        else:
+            x_train, y_train = self.read_images_labels(self.train_images_file, self.train_labels_file)
+            x_test, y_test = self.read_images_labels(self.test_images_file, self.test_labels_file)
+            return (x_train, y_train), (x_test, y_test)
 
     def show_images(self):
         (x_train, y_train), (x_test, y_test) = self.load_data()
@@ -50,3 +59,17 @@ class MnistDataloader(object):
             plt.title(title, fontsize=15)
             plt.imshow(image, cmap="gray", vmin=0, vmax=255)
         plt.show()
+
+    def filter(self, s, predicate):
+        return pd.Series(dict(reduce(lambda l, i: l + [(i, s[i])] if predicate(s[i]) else l, s.index, [])))
+
+    def zeroOneDataFrame(self, part):
+        x, y = self.load_data(part)
+        m, n = x[0].shape
+        zero_one_classes = self.filter(pd.Series(y), lambda v: v in {0, 1})
+        cols = ["({},{})".format(i // n, i % n) for i in range(m * n)] + ["Class"]
+        d = dict([(i, np.concatenate((x[i].flatten(), [y[i]]))) for i in zero_one_classes.index])
+        df = pd.DataFrame.from_dict(d, "index", columns = cols)
+        print(df.head())
+        df.to_csv("df.csv")
+        return df
