@@ -1,22 +1,39 @@
 import os
 import random
 import matplotlib.pyplot as plt
-from MnistDataloader import MnistDataloader
 import pandas as pd
+from MnistDataloader import MnistDataloader
+from NaiveBayes import NaiveBayes
+
 
 def f(i):
     if i == 1:
         M = MnistDataloader()
-        s = pd.Series([4, 7, 8, 9])
-        predicate = lambda v: v == 4 or v == 8
-        print(M.filter(s, predicate))
+        NB = NaiveBayes(M.zero_one_train)
+        Q = NB.Q()
+        f = NB.predicted_class()
+        x = NB.value()(1)
+        print(f(x))
+        """
+        for j in range(len(NB.data.features)):
+            F = F_func(j)
+            print("------")
+            print(j)
+            print(F)
+            print(F.loc[(0, x[j]), "Count"])
+        j = 263
+        print(j)
+        print(x[j])
+        print(NB.target(0))
+        df = F_func(j)
+        df.to_csv("df.csv")
+        """
+
     if i == 2:
-        M = MnistDataloader(createcsvs=False)
-        df = M.zero_one_train.head()
-        print(df)
+        pass
 
 if __name__ == '__main__':
-    f(2)
+    f(1)
 
 
 
