@@ -8,11 +8,16 @@ import pandas as pd
 from functools import reduce
 
 class MnistDataloader(object):
-    def __init__(self):
+    def __init__(self, createcsvs = False):
         names = ["train-images-idx3-ubyte", "train-labels-idx1-ubyte", "t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte"]
         files = ["\\".join([os.getcwd(), "archive", name, name]) for name in names]
         self.train_images_file, self.train_labels_file, self.test_images_file, self.test_labels_file = files
-
+        if createcsvs:
+            self.zero_one_train = self.zeroOneDataFrame("train")
+            self.zero_one_test = self.zeroOneDataFrame("test")
+        else:
+            self.zero_one_train = pd.read_csv("\\".join([os.getcwd(), "zero_one_csvs", "zero_one_train.csv"]), index_col=0)
+            self.zero_one_test = pd.read_csv("\\".join([os.getcwd(), "zero_one_csvs", "zero_one_test.csv"]), index_col=0)
     def read_images_labels(self, images_file, labels_file):
         with open(labels_file, 'rb') as file:
             magic, size = struct.unpack(">II", file.read(8))
@@ -66,10 +71,12 @@ class MnistDataloader(object):
     def zeroOneDataFrame(self, part):
         x, y = self.load_data(part)
         m, n = x[0].shape
-        zero_one_classes = self.filter(pd.Series(y), lambda v: v in {0, 1})
         cols = ["({},{})".format(i // n, i % n) for i in range(m * n)] + ["Class"]
-        d = dict([(i, np.concatenate((x[i].flatten(), [y[i]]))) for i in zero_one_classes.index])
+        zero_one_index = self.filter(pd.Series(y), lambda v: v in {0, 1}).index
+        d = dict([(i, np.concatenate((x[i].flatten(), [y[i]]))) for i in zero_one_index])
         df = pd.DataFrame.from_dict(d, "index", columns = cols)
-        print(df.head())
-        df.to_csv("df.csv")
+        df.to_csv("\\".join([os.getcwd(), "zero_one_csvs", "zero_one_{}.csv".format(part)]))
         return df
+
+
+

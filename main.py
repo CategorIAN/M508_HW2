@@ -11,8 +11,9 @@ def f(i):
         predicate = lambda v: v == 4 or v == 8
         print(M.filter(s, predicate))
     if i == 2:
-        M = MnistDataloader()
-        M.toDataFrame("test")
+        M = MnistDataloader(createcsvs=False)
+        df = M.zero_one_train.head()
+        print(df)
 
 if __name__ == '__main__':
     f(2)
