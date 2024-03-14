@@ -23,7 +23,7 @@ def f(i):
         train, test = M.zero_one_train, M.zero_one_test
         print(M.zero_one_test.df.head())
         A = Analysis(train, test)
-        #print(A.finalConfMat())
+        print(A.timed(A.finalConfMat))
 
 
 if __name__ == '__main__':

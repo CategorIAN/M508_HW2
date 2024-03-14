@@ -10,10 +10,10 @@ from MLData import MLData
 
 class MnistDataloader(object):
     def __init__(self, createcsvs = False):
+        names = ["train-images-idx3-ubyte", "train-labels-idx1-ubyte", "t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte"]
+        files = ["\\".join([os.getcwd(), "archive", name, name]) for name in names]
+        self.train_images_file, self.train_labels_file, self.test_images_file, self.test_labels_file = files
         if createcsvs:
-            names = ["train-images-idx3-ubyte", "train-labels-idx1-ubyte", "t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte"]
-            files = ["\\".join([os.getcwd(), "archive", name, name]) for name in names]
-            self.train_images_file, self.train_labels_file, self.test_images_file, self.test_labels_file = files
             self.zeroOneCSV("train")
             self.zeroOneCSV("test")
         features = ["({},{})".format(i // 28, i % 28) for i in range(28 * 28)]

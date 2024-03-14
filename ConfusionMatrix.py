@@ -5,11 +5,11 @@ class ConfusionMatrix:
     def __init__(self, matrix):
         self.matrix = matrix
 
-    def __repr__(self):
+    def df(self):
         return pd.DataFrame(self.matrix, columns=["ActualTrue", "ActualFalse"], index=["PredTrue", "PredFalse"])
 
     def __str__(self):
-        return str(self.__repr__())
+        return str(self.df())
 
     def error(self):
         total = np.sum(self.matrix)
