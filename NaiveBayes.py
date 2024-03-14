@@ -1,40 +1,20 @@
 import pandas as pd
 from functools import reduce
+from GenerativeModel import GenerativeModel
 
-class NaiveBayes:
+class NaiveBayes (GenerativeModel):
     def __init__(self, data):
-        self.data = data
+        super().__init__(data)
+        self.Fs = dict([(j, self.F(j)) for j in range(len(self.data.features))])
 
-    def Q(self, df = None):
-        df = self.data.df if df is None else df
-        Qframe = pd.DataFrame(df.groupby(by=["Class"])["Class"].agg("count")).rename(columns={"Class": "Count"})
-        return pd.concat([Qframe, pd.Series(Qframe["Count"] / df.shape[0], name="Q")], axis=1)
+    def F(self, j):
+        target = self.data.target_name
+        grouped_df = self.data.df.groupby(by=[target, self.data.features[j]])
+        Fframe = pd.DataFrame(grouped_df[target].agg("count")).rename(columns={target: "Count"})
+        Ffunc = lambda t: (Fframe["Count"][t] + 1) / (self.Q.at[t[0], "Count"] + len(self.data.features))
+        Fcol = Fframe.index.to_series().map(Ffunc)
+        return pd.concat([Fframe, pd.Series(Fcol, name = "F")], axis = 1).to_dict()["F"]
 
-    def F(self, Qframe, df = None):
-        df = self.data.df if df is None else df
-        def g(j):
-            Fframe = pd.DataFrame(df.groupby(by=["Class", self.data.features[j]])["Class"].agg("count")).rename(
-                columns={"Class": "Count"})
-            Fcol = Fframe.index.to_series().map(lambda t: (Fframe["Count"][t] + 1) /
-                                                   (Qframe.at[t[0], "Count"] + len(self.data.features)))
-            return pd.concat([Fframe, pd.Series(Fcol, name = "F")], axis = 1)
-        return g
+    def cond_prob_func(self, cl, x):
+        return reduce(lambda r, j: r * self.Fs[j].get((cl, x[j]), 0), range(len(self.data.features)), 1)
 
-    def Fs(self, Qframe, df = None):
-        F_func = self.F(Qframe, df)
-        return dict([(j, F_func(j)) for j in range(len(self.data.features))])
-
-    def class_prob(self, Qframe, df = None):
-        Fframes = self.Fs(Qframe, df)
-        def f(cl, x):
-            return reduce(lambda r, j: r * Fframes[j].to_dict()["F"].get((cl, x[j]), 0),
-                          range(len(self.data.features)), Qframe.at[cl, "Q"])
-        return f
-
-    def predicted_class(self, df = None):
-        Qframe = self.Q(df)
-        class_prob_func = self.class_prob(Qframe, df)
-        def f(x):
-            cl_probs = Qframe.index.map(lambda cl: (cl, class_prob_func(cl, x)))
-            return reduce(lambda t1, t2: t2 if t1[0] is None or t2[1] > t1[1] else t1, cl_probs, (None, None))[0]
-        return f
