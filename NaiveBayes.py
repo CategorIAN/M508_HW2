@@ -33,7 +33,7 @@ class NaiveBayes:
 
     def predicted_class(self, df = None):
         Qframe = self.Q(df)
-        class_prob_func = self.class_prob(df)
+        class_prob_func = self.class_prob(Qframe, df)
         def f(x):
             cl_probs = Qframe.index.map(lambda cl: (cl, class_prob_func(cl, x)))
             return reduce(lambda t1, t2: t2 if t1[0] is None or t2[1] > t1[1] else t1, cl_probs, (None, None))[0]

@@ -1,18 +1,27 @@
 import pandas as pd
+import numpy as np
 
 class ConfusionMatrix:
-    def __init__(self, TP, FP, FN, TN):
-        self.TP, self.FP, self.FN, self.TN,  = TP, FP, FN, TN
+    def __init__(self, matrix):
+        self.matrix = matrix
 
     def __repr__(self):
-        return pd.DataFrame({"ActualTrue":[self.TP, self.FN], "ActualFalse":[self.FP, self.TN]},
-                            index=["PredTrue", "PredFalse"])
+        return pd.DataFrame(self.matrix, columns=["ActualTrue", "ActualFalse"], index=["PredTrue", "PredFalse"])
+
+    def __str__(self):
+        return str(self.__repr__())
 
     def error(self):
-        return (self.FP + self.FN) / (self.TP + self.TN + self.FP + self.FN)
+        total = np.sum(self.matrix)
+        return (total - np.trace(self.matrix)) / total
 
     def precision(self):
-        return self.TP / (self.TP + self.FP)
+        return self.matrix[0][0] / sum(self.matrix[0])
 
     def recall(self):
-        return self.TP / (self.TP + self.FN)
+        return self.matrix[0][0] / sum(self.matrix[:, 0])
+
+    def updated(self, predicted, actual):
+        unitvector = lambda boolean: np.array([int(boolean), int(not boolean)])
+        m = np.outer(unitvector(predicted), unitvector(actual))
+        return ConfusionMatrix(self.matrix + m)

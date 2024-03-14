@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import time
 import matplotlib.pyplot as plt
+import numpy as np
+from functools import reduce
 from NaiveBayes import NaiveBayes
 from ConfusionMatrix import ConfusionMatrix
 
@@ -11,19 +13,10 @@ class Analysis:
         self.nb = NaiveBayes(train)
         self.test = test
 
-    def finalConfMat(self, test_df):
+    def finalConfMat(self):
         pred_class_func = self.nb.predicted_class()
-        def updateMat(cf, i):
-            x, actual = self.test.value(i), self.test.target(i)
-            predicted = pred_class_func(x)
-            if predicted == 1:
-                if actual == 1:
-                    return ConfusionMatrix(TP=cf.TP + 1, FP=cf.FP, FN=cf.FN, TN=cf.FN)
-                else:
-                    return ConfusionMatrix(TP=cf.TP, FP=cf.FP + 1, TN=cf.TN, FN=cf.FN)
-            else:
-                if actual == 1:
-                    ConfusionMatrix(TP=cf.TP, FP=cf.FP, TN=cf.TN, FN=cf.TN)
-                else:
-
-
+        def updatedConfMat(cf, i):
+            print("i={}".format(i))
+            predicted, actual = bool(pred_class_func(self.test.value(i))), bool(self.test.target(i))
+            return cf.updated(predicted, actual)
+        return reduce(updatedConfMat, range(self.test.df.shape[0]), ConfusionMatrix(np.zeros((2, 2), dtype=int)))

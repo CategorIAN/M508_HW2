@@ -19,7 +19,7 @@ class MnistDataloader(object):
         features = ["({},{})".format(i // 28, i % 28) for i in range(28 * 28)]
         zero_one_file = lambda type: "\\".join([os.getcwd(), "zero_one_csvs", "zero_one_{}.csv".format(type)])
         self.zero_one_train = MLData("MNist_ZeroOne_Train", zero_one_file("train"), features, "Class")
-        self.zero_one_test = MLData("MNist_ZeroOne_Train", zero_one_file("train"), features, "Class")
+        self.zero_one_test = MLData("MNist_ZeroOne_Test", zero_one_file("test"), features, "Class")
 
     def read_images_labels(self, images_file, labels_file):
         with open(labels_file, 'rb') as file:
