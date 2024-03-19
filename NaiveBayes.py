@@ -7,6 +7,9 @@ class NaiveBayes (GenerativeModel):
         super().__init__(data)
         self.Fs = dict([(j, self.F(j)) for j in range(len(self.data.features))])
 
+    def __str__(self):
+        return "NaiveBayes"
+
     def F(self, j):
         target = self.data.target_name
         grouped_df = self.data.df.groupby(by=[target, self.data.features[j]])

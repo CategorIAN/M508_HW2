@@ -22,18 +22,15 @@ def f(i):
     if i == 3:
         M = MnistDataloader()
         train, test = M.zero_one_train, M.zero_one_test
-        print(M.zero_one_test.df.head())
-        A = Analysis(train, test)
+        A = Analysis(train, test, "GDA")
         print(A.timed(A.finalConfMat))
     if i == 4:
         M = MnistDataloader()
         train, test = M.zero_one_train, M.zero_one_test
         gda = GDA(train)
         x = train.value(0)
-        Q = gda.Q()
-        class_prob_func = gda.class_prob(Q)
-        print("Prob is 0: {}".format(class_prob_func(0, x)))
-        print("Prob is 1: {}".format(class_prob_func(1, x)))
+        print("Prob is 0: {}".format(gda.class_prob(0, x)))
+        print("Prob is 1: {}".format(gda.class_prob(1, x)))
 
 
 
