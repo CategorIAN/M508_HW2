@@ -10,6 +10,9 @@ from MLData import MLData
 
 class MnistDataloader(object):
     def __init__(self, createcsvs = False):
+        '''
+        :param createcsvs: Determines whether to create csv files of 0-1 training and test data.
+        '''
         names = ["train-images-idx3-ubyte", "train-labels-idx1-ubyte", "t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte"]
         files = ["\\".join([os.getcwd(), "archive", name, name]) for name in names]
         self.train_images_file, self.train_labels_file, self.test_images_file, self.test_labels_file = files
@@ -22,6 +25,11 @@ class MnistDataloader(object):
         self.zero_one_test = MLData("MNist_ZeroOne_Test", zero_one_file("test"), features, "Class")
 
     def read_images_labels(self, images_file, labels_file):
+        '''
+        :param images_file: File that contains the images.
+        :param labels_file: File that contains the labels.
+        :return: A tuple of the images, a list of numpy arrays, and labels, a list of strings.
+        '''
         with open(labels_file, 'rb') as file:
             magic, size = struct.unpack(">II", file.read(8))
             if magic != 2049:
@@ -38,6 +46,10 @@ class MnistDataloader(object):
         return images, labels
 
     def load_data(self, part = None):
+        '''
+        :param part: Either 'train' or 'test' or None (to get both)
+        :return: A tuple of the data features and the data targets
+        '''
         if part == "train":
             x_train, y_train = self.read_images_labels(self.train_images_file, self.train_labels_file)
             return x_train, y_train
@@ -50,6 +62,9 @@ class MnistDataloader(object):
             return (x_train, y_train), (x_test, y_test)
 
     def show_images(self):
+        '''
+        :return: Shows random image-label pairs from both the training data and the test data.
+        '''
         (x_train, y_train), (x_test, y_test) = self.load_data()
         def index_image_title(i):
             if i < 10:
@@ -72,6 +87,10 @@ class MnistDataloader(object):
         return pd.Series(dict(reduce(lambda l, i: l + [(i, s[i])] if predicate(s[i]) else l, s.index, [])))
 
     def zeroOneCSV(self, part):
+        '''
+        :param part: Either 'train' of 'test'
+        :return: Writes a CSV file of the 0-1 data.
+        '''
         x, y = self.load_data(part)
         cols = ["({},{})".format(i // 28, i % 28) for i in range(28 * 28)] + ["Class"]
         zero_one_index = self.filter(pd.Series(y), lambda v: v in {0, 1}).index
