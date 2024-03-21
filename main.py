@@ -1,6 +1,7 @@
 import numpy as np
 from MnistDataloader import MnistDataloader
 from NaiveBayes import NaiveBayes
+from GDA import GDA
 from ConfusionMatrix import ConfusionMatrix
 from Analysis import Analysis
 
@@ -17,11 +18,9 @@ def f(i):
     if i == 3:
         M = MnistDataloader()
         train, test = M.zero_one_train, M.zero_one_test
-        A = Analysis(train, test, "GDA")
-        print(A.timed(A.finalConfMat))
-
-
-
+        gda = GDA(train)
+        #A = Analysis(train, test, "GDA")
+        #print(A.timed(A.finalConfMat))
 
 
 if __name__ == '__main__':

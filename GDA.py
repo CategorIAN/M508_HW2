@@ -19,6 +19,7 @@ class GDA (GenerativeModel):
         print("d: {}".format(self.d))
         print("p: {}".format(self.p))
         print("Sigma: \n{}".format(self.Sigma))
+        print("Det: {}".format(self.Sigma_det))
 
     def __str__(self):
         return "GDA"
@@ -38,10 +39,13 @@ class GDA (GenerativeModel):
         :return: The invertible covariance matrix based on nonzero-variance components along with those components
         '''
         def addMatrix(m, i):
+            print("-----------------------------")
+            print("i: {}".format(i))
             v = self.X[i] - self.mu_dict[self.data.target(i)]
             return m + np.outer(v, v)
         M = reduce(addMatrix, range(self.n), np.zeros((self.d, self.d))) / self.n
-        nonzero_comps = list(self.filter(pd.Series(range(self.d)), lambda i: np.any(M[i, :])))
+        epsilon = np.linalg.norm(np.power(10, 3) * np.ones((self.d,)))
+        nonzero_comps = list(self.filter(pd.Series(range(self.d)), lambda i: np.linalg.norm(M[i, :]) > epsilon))
         return M[np.ix_(nonzero_comps, nonzero_comps)], nonzero_comps
 
     def cond_prob_func(self, cl, x):
