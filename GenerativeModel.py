@@ -6,9 +6,13 @@ class GenerativeModel:
         '''
         :param data: MLData object to train the model on
         '''
-        self.data = data
+        self.data = data.transformed(self.transform_data)
+        #self.df = self.transform_data(self.data.df)
         self.Q = self.getQ()
-        print("Q: \n{}".format(self.Q))
+        #print("Q: \n{}".format(self.Q))
+
+    def transform_data(self, df):
+        pass
 
     def getQ(self):
         '''

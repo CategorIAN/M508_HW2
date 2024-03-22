@@ -13,6 +13,9 @@ class NaiveBayes (GenerativeModel):
     def __str__(self):
         return "NaiveBayes"
 
+    def transform_data(self, df):
+        return df
+
     def F(self, j):
         '''
         :param j: The index of the feature

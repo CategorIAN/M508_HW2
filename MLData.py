@@ -1,7 +1,7 @@
 import pandas as pd
 
 class MLData:
-    def __init__(self, name, file, features, target_name):
+    def __init__(self, name, file, features, target_name, transform = None):
         '''
         :param name: The name of the data set
         :param file: The file location
@@ -9,7 +9,8 @@ class MLData:
         :param target_name: The name of the target
         '''
         self.name, self.file, self.features, self.target_name = name, file, features, target_name
-        self.df = pd.read_csv(self.file, index_col=0)
+        df = pd.read_csv(self.file, index_col=0)
+        self.df = df if transform is None else pd.concat([transform(df[features]), df[target_name]], axis=1)
         self.classes = pd.Index(list(set(self.df[target_name])))
 
     def __str__(self):
@@ -28,3 +29,6 @@ class MLData:
         :return: The target value of the sample with the given index in the data set
         '''
         return self.df.iloc[i][self.target_name]
+
+    def transformed(self, f):
+        return MLData(self.name, self.file, self.features, self.target_name, transform = f)

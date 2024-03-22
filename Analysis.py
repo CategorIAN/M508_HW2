@@ -16,7 +16,7 @@ class Analysis:
         :param model: The model to use (either 'NaiveBayes' or 'GDA')
         '''
         self.model = NaiveBayes(train) if model == "NaiveBayes" else GDA(train)
-        self.test = test
+        self.test = test.transformed(self.model.transform_data)
 
     def finalConfMat(self):
         '''
