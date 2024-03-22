@@ -21,10 +21,20 @@ def f(i):
         #gda = GDA(train)
         A = Analysis(train, test, "GDA")
         print(A.timed(A.finalConfMat))
+    if i == 4:
+        M = MnistDataloader()
+        train, test = M.zero_one_train, M.zero_one_test
+        gda = GDA(train)
+        print(gda.data.df)
+    if i == 5:
+        M = MnistDataloader()
+        train, test = M.zero_one_train, M.zero_one_test
+        A = Analysis(train, test, "GDA")
+        print(A.finalConfMat())
 
 
 if __name__ == '__main__':
-    f(3)
+    f(5)
 
 
 

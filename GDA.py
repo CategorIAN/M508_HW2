@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-import math
 from functools import reduce
 from GenerativeModel import GenerativeModel
+from sklearn.preprocessing import StandardScaler
 
 
 class GDA (GenerativeModel):
@@ -26,7 +26,8 @@ class GDA (GenerativeModel):
         return "GDA"
 
     def transform_data(self, df):
-        return df.applymap(lambda x: x / 10)
+        scaler = StandardScaler().set_output(transform="pandas")
+        return scaler.fit_transform(df)
 
     def mu(self, cl):
         '''
@@ -48,7 +49,7 @@ class GDA (GenerativeModel):
             v = self.X[i] - self.mu_dict[self.data.target(i)]
             return m + np.outer(v, v)
         M = reduce(addMatrix, range(self.n), np.zeros((self.d, self.d))) / self.n
-        alpha = 1
+        alpha = 0.5
         nonzero_comps = list(self.filter(pd.Series(range(self.d)), lambda i: np.linalg.norm(M[i, :]) > (10 ** alpha)))
         return M[np.ix_(nonzero_comps, nonzero_comps)], nonzero_comps
 
