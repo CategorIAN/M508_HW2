@@ -1,7 +1,5 @@
-import pandas as pd
 import os
 import time
-import matplotlib.pyplot as plt
 import numpy as np
 from functools import reduce
 from NaiveBayes import NaiveBayes

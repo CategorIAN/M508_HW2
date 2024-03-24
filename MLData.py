@@ -7,6 +7,7 @@ class MLData:
         :param file: The file location
         :param features: The features of the data set
         :param target_name: The name of the target
+        :param transform: Function that transforms the features of the original data
         '''
         self.name, self.file, self.features, self.target_name = name, file, features, target_name
         df = pd.read_csv(self.file, index_col=0)
@@ -31,4 +32,8 @@ class MLData:
         return self.df.iloc[i][self.target_name]
 
     def transformed(self, f):
+        '''
+        :param f: Function to transform the features
+        :return: MLData object that has its features transformed by f.
+        '''
         return MLData(self.name, self.file, self.features, self.target_name, transform = f)

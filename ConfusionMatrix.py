@@ -3,9 +3,15 @@ import numpy as np
 
 class ConfusionMatrix:
     def __init__(self, matrix):
+        '''
+        :param matrix: A numpy array of the confusion matrix
+        '''
         self.matrix = matrix
 
     def df(self):
+        '''
+        :return: A pandas dataframe representation of the confusion matrix
+        '''
         return pd.DataFrame(self.matrix, columns=["ActualTrue", "ActualFalse"], index=["PredTrue", "PredFalse"])
 
     def __str__(self):
@@ -22,6 +28,11 @@ class ConfusionMatrix:
         return self.matrix[0][0] / sum(self.matrix[:, 0])
 
     def updated(self, predicted, actual):
+        '''
+        :param predicted: Boolean of the predicted
+        :param actual: Boolean of the actual
+        :return: Confusion matrix with one entry added by one
+        '''
         unitvector = lambda boolean: np.array([int(boolean), int(not boolean)])
         m = np.outer(unitvector(predicted), unitvector(actual))
         return ConfusionMatrix(self.matrix + m)

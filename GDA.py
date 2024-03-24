@@ -26,6 +26,10 @@ class GDA (GenerativeModel):
         return "GDA"
 
     def transform_data(self, df):
+        '''
+        :param df: Pandas dataframe to transform
+        :return: Transformed pandas dataframe
+        '''
         scaler = StandardScaler().set_output(transform="pandas")
         return scaler.fit_transform(df)
 

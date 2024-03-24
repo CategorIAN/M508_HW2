@@ -30,9 +30,6 @@ class GenerativeModel:
         '''
         pass
 
-    def class_prob_2(self, cl, x):
-        cond_prob = self.cond_prob_func(cl, x)
-        return cond_prob * self.Q.at[cl, "Q"]
 
     def class_prob(self, cl, x):
         '''
@@ -40,7 +37,8 @@ class GenerativeModel:
         :param x: The data features
         :return: The probability of getting the data features and the class
         '''
-        return self.printed([None, None], "Prob\n", self.class_prob_2, (cl, x))
+        cond_prob = self.cond_prob_func(cl, x)
+        return cond_prob * self.Q.at[cl, "Q"]
 
     def predicted_class(self, x):
         '''
