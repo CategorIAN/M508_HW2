@@ -4,7 +4,6 @@ from functools import reduce
 from GenerativeModel import GenerativeModel
 from sklearn.preprocessing import StandardScaler
 
-
 class GDA (GenerativeModel):
     def __init__(self, data):
         '''
@@ -17,10 +16,12 @@ class GDA (GenerativeModel):
         self.Sigma, self.components = self.covMat_Components()
         self.p = len(self.components)
         self.Sigma_det, self.Sigma_inv = np.linalg.det(self.Sigma), np.linalg.inv(self.Sigma)
+        '''
         print("d: {}".format(self.d))
         print("p: {}".format(self.p))
         print("Sigma: \n{}".format(self.Sigma))
         print("Det: {}".format(self.Sigma_det))
+        '''
 
     def __str__(self):
         return "GDA"

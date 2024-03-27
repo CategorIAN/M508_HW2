@@ -14,7 +14,11 @@ class NaiveBayes (GenerativeModel):
         return "NaiveBayes"
 
     def transform_data(self, df):
-        return df
+        '''
+        :param df: Pandas dataframe to transform
+        :return: Transformed pandas dataframe
+        '''
+        return df.applymap(lambda i: int(i > 127))
 
     def F(self, j):
         '''
